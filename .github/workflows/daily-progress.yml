@@ -1,0 +1,54 @@
+name: EconoCausal Daily Progress
+on:
+  schedule:
+    # 15:30 UTC = 21:00 IST (Asia/Kolkata)
+    - cron: "30 15 * * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  progress-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record scheduled project reminder
+        run: |
+          echo "EconoCausal daily milestone reminder triggered at $(date -u +%FT%TZ)."
+          echo "Review docs/PROJECT_PLAN.md and docs/PROGRESS.md, work on the next milestone, test it, and commit the incremental result."
+          echo "This workflow is a reminder only; it does not autonomously develop or commit project code."
+      - name: Create a daily progress issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const today = new Date().toISOString().slice(0, 10);
+            const title = `EconoCausal daily milestone — ${today}`;
+            const body = [
+              '## Daily project check-in',
+              '',
+              '- [ ] Review current repository status and progress log',
+              '- [ ] Work only on the next 10-day plan milestone',
+              '- [ ] Run relevant validation/tests',
+              '- [ ] Update docs/PROGRESS.md',
+              '- [ ] Commit/push the focused increment',
+              '- [ ] Note blockers and the next step',
+              '',
+              'Read [the 10-day plan](../blob/main/docs/PROJECT_PLAN.md) and [progress log](../blob/main/docs/PROGRESS.md).',
+              '',
+              'Reminder only: this issue does not automatically implement or push code.'
+            ].join('\n');
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100
+            });
+            if (issues.some(issue => issue.title === title)) {
+              core.info('Daily progress issue already exists; no duplicate created.');
+              return;
+            }
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: []
+            });
