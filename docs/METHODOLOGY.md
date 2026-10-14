@@ -1,25 +1,32 @@
-# Methodology and Decision Log
+# Methodology and Identification Notes
 
-## Target estimand (provisional)
-A partially linear regression (PLR) DML parameter for the effect of a defined price treatment on a defined demand outcome, conditional on a specified set of observed covariates. Final variables and scale will be selected only after dataset inspection.
+## Research question
+Can public retail observations support an estimate of the effect of price on demand after controlling for observed confounding factors?
 
-## Working model
-Y = theta * T + g(X) + epsilon
-T = m(X) + V
+## Partially linear DML framework
+A starting model is \(Y = \theta T + g(X) + \epsilon\), with price treatment \(T = m(X) + V\). Here \(Y\) is demand, \(X\) are observed covariates, and \(\theta\) is the target effect. DML learns nuisance functions and uses an orthogonal score with cross-fitting.
 
-DML estimates nuisance functions for the outcome and treatment, uses cross-fitting and an orthogonal score, and provides inference for theta under its assumptions.
+## Decisions to document before estimation
+- Unit of observation and target population.
+- Treatment scale (price or log-price) and outcome (quantity or a documented transformation).
+- Which covariates are pre-treatment confounders and why.
+- Within-product price variation and treatment overlap.
+- Handling of time dependence, product identity, missing values and outliers.
+- Learners, cross-fitting folds, random seeds and inference procedure.
 
-## Identification assumptions to assess
-- Conditional exchangeability/no important unobserved confounding given X.
-- Treatment variation/overlap (prices vary sufficiently across comparable observations).
-- Correctly defined unit and outcome; sampling/selection mechanism understood.
-- No problematic interference, anticipation, or uncontrolled time/product shocks for the proposed estimand.
-- Nuisance models and inference procedure appropriate for dependence structure.
+## Identification risks
+DML does not solve unobserved confounding or selection bias. UCI Online Retail records transactions, not every opportunity to buy or periods with zero sales. Observed price may be correlated with product mix, popularity, customer selection, stock availability and seller decisions. Causal identification must be justified rather than assumed.
 
-These assumptions cannot be proven from data alone. The report will discuss evidence and limitations.
+If the dataset cannot support identification, treat its analysis as descriptive/predictive and say so plainly. A model coefficient alone does not prove that an intervention will increase sales or profit.
 
-## Important distinction
-Predictive MAE/RMSE evaluate prediction. They do not validate a causal estimate. A confidence interval quantifies estimator uncertainty under the model and inference assumptions; it does not account for all unobserved confounding automatically.
+## Evaluation
+- Predictive metrics such as held-out MAE/RMSE for prediction tasks.
+- Causal estimate, standard error and confidence interval with assumptions stated.
+- Uncontrolled association versus adjusted estimate and alternate specifications.
+- Sensitivity to modelling choices and data restrictions.
+- Pricing scenarios that disclose unit-cost assumptions; no realized uplift claim without valid evaluation.
 
-## Pricing decisions
-Only considered after causal/demand estimates and support diagnostics. State unit-cost assumptions; report revenue and profit separately; restrict candidates to observed/supportable price ranges and avoid extrapolation.
+## References
+- DoubleML: https://docs.doubleml.org/
+- EconML: https://econml.azurewebsites.net/
+- UCI Online Retail: https://archive.ics.uci.edu/dataset/352/online+retail

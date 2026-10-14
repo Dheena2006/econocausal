@@ -1,28 +1,17 @@
-# Python
 __pycache__/
 *.py[cod]
-*.egg-info/
+.ipynb_checkpoints/
 .venv/
 venv/
 .env
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Data (download and regenerate locally; do not upload raw source data by default)
 data/raw/*
-data/processed/*
 !data/raw/.gitkeep
+data/processed/*
 !data/processed/.gitkeep
-
-# Outputs that may be large/reproducible
 outputs/figures/*
-outputs/evaluation/*
 !outputs/figures/.gitkeep
+outputs/evaluation/*
 !outputs/evaluation/.gitkeep
-
-# OS / IDE
 .DS_Store
 Thumbs.db
 .vscode/
-.idea/
